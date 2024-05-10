@@ -233,6 +233,7 @@ __global__ void preprocessCUDA(int P, int D, int M,
 	float2 point_image = { ndc2Pix(p_proj.x, W), ndc2Pix(p_proj.y, H) };
 	uint2 rect_min, rect_max;
 	getRect(point_image, my_radius, rect_min, rect_max, grid);
+	// 忽略 3 sigma 小于一个 block 的 GS
 	if ((rect_max.x - rect_min.x) * (rect_max.y - rect_min.y) == 0)
 		return;
 

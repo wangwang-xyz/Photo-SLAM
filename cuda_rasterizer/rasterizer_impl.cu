@@ -87,7 +87,7 @@ __global__ void duplicateWithKeys(
 		// Find this Gaussian's offset in buffer for writing keys/values.
 		uint32_t off = (idx == 0) ? 0 : offsets[idx - 1];
 		uint2 rect_min, rect_max;
-
+		// TODO:重复
 		getRect(points_xy[idx], radii[idx], rect_min, rect_max, grid);
 
 		// For each tile that the bounding rect overlaps, emit a 
@@ -273,10 +273,13 @@ int CudaRasterizer::Rasterizer::forward(
 
 	// Compute prefix sum over full list of touched tile counts by Gaussians
 	// E.g., [2, 3, 0, 2, 1] -> [2, 5, 5, 7, 8]
+	// 计算 GS 覆盖 tiles 的数量的累加
 	cub::DeviceScan::InclusiveSum(geomState.scanning_space, geomState.scan_size,
 		geomState.tiles_touched, geomState.point_offsets, P);
 
 	// Retrieve total number of Gaussian instances to launch and resize aux buffers
+	// 把指针（point_offsets + P - 1），也就是point_offsets数组的最后一个元素的值，
+	// 赋给num_rendered，也就是总共覆盖的tiles数量
 	int num_rendered;
 	cudaMemcpy(&num_rendered, geomState.point_offsets + P - 1, sizeof(int), cudaMemcpyDeviceToHost);
 

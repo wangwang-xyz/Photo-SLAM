@@ -37,7 +37,7 @@ __device__ const float SH_C3[] = {
 	1.445305721320277f,
 	-0.5900435899266435f
 };
-
+// TODO
 __forceinline__ __device__ float ndc2Pix(float v, int S)
 {
 	return ((v + 1.0) * S - 1.0) * 0.5;
@@ -45,10 +45,12 @@ __forceinline__ __device__ float ndc2Pix(float v, int S)
 
 __forceinline__ __device__ void getRect(const float2 p, int max_radius, uint2& rect_min, uint2& rect_max, dim3 grid)
 {
+	// 向下取整
 	rect_min = {
 		min(grid.x, max((int)0, (int)((p.x - max_radius) / BLOCK_X))),
 		min(grid.y, max((int)0, (int)((p.y - max_radius) / BLOCK_Y)))
 	};
+	// 向上取整
 	rect_max = {
 		min(grid.x, max((int)0, (int)((p.x + max_radius + BLOCK_X - 1) / BLOCK_X))),
 		min(grid.y, max((int)0, (int)((p.y + max_radius + BLOCK_Y - 1) / BLOCK_Y)))
